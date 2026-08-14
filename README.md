@@ -9,7 +9,7 @@ Una experiencia interactiva creada para el cumpleaños 19 de Ali:
 - carta flotante que abre una sola carta continua;
 - fotografía de Ali de pequeña, título de cumpleaños y el texto completo con efecto de escritura;
 - nube de recuerdo en pixel art que aparece únicamente al terminar de escribirse la carta;
-- minijuego de Casa de Cultura que se abre desde la nube, con personajes animados en alta resolución, entrada cinematográfica, controles táctiles y de teclado, música y una escena final;
+- minijuego de Casa de Cultura que se abre desde la nube, con personajes animados en alta resolución, entrada cinematográfica, controles táctiles y de teclado, música continua durante toda la experiencia y una escena final;
 - canciones de Ariana Grande y Sabrina Carpenter en orden aleatorio;
 - foto musical colgada de una cuerda que baja, permanece 10 segundos y vuelve a subir;
 - fragmentos oficiales muy breves que se escriben junto a la carta y cambian de posición;

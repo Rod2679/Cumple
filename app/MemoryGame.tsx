@@ -75,6 +75,8 @@ type RigMotion = {
   alpha?: number;
 };
 
+const BOY_SCALE = 1.075;
+
 type SceneLayout = {
   width: number;
   height: number;
@@ -266,9 +268,9 @@ function createRig(source: HTMLCanvasElement, kind: "boy" | "girl" | "shadow"): 
         { x: 95, y: 410, width: 265, height: 215 },
         { x: 228, y: 420 },
         [
-          { x: 50, y: 0 }, { x: 215, y: 0 }, { x: 238, y: 24 },
-          { x: 220, y: 64 }, { x: 218, y: 215 }, { x: 47, y: 215 },
-          { x: 45, y: 64 }, { x: 27, y: 24 },
+          { x: 42, y: 0 }, { x: 223, y: 0 }, { x: 245, y: 28 },
+          { x: 232, y: 76 }, { x: 224, y: 215 }, { x: 41, y: 215 },
+          { x: 33, y: 76 }, { x: 20, y: 28 },
         ],
       ),
       leftArm: makePart(
@@ -584,13 +586,31 @@ function drawJointedArm(
   const forearmWidth = part.width * 0.35;
   const wristWidth = part.width * 0.22;
   const outline = Math.max(3, part.width * 0.095);
+  const shoulderWidth = upperWidth * (rig.width > 440 ? 1.2 : 1.06);
+  const shoulderHeight = upperWidth * (rig.width > 440 ? 0.86 : 0.78);
 
+  rect(
+    ctx,
+    shoulderX - shoulderWidth * 0.58,
+    shoulderY - shoulderHeight * 0.54,
+    shoulderWidth * 1.16,
+    shoulderHeight * 1.08,
+    rig.palette.outline,
+  );
   drawArmSegment(ctx, shoulderX, shoulderY, elbowX, elbowY, upperWidth + outline, rig.palette.outline);
   drawArmSegment(ctx, elbowX, elbowY, wristX, wristY, forearmWidth + outline, rig.palette.outline);
   drawArmSegment(ctx, wristX, wristY, handX, handY, wristWidth + outline * 0.7, rig.palette.outline);
   drawArmSegment(ctx, shoulderX, shoulderY, elbowX, elbowY, upperWidth, rig.palette.sleeve);
   drawArmSegment(ctx, elbowX, elbowY, wristX, wristY, forearmWidth, rig.palette.sleeve);
   drawArmSegment(ctx, wristX, wristY, handX, handY, wristWidth, rig.palette.skin);
+  rect(
+    ctx,
+    shoulderX - shoulderWidth * 0.43,
+    shoulderY - shoulderHeight * 0.39,
+    shoulderWidth * 0.86,
+    shoulderHeight * 0.78,
+    rig.palette.sleeve,
+  );
 
   const handSize = part.width * 0.29;
   ctx.fillStyle = rig.palette.outline;
@@ -878,7 +898,7 @@ function drawSparkle(ctx: CanvasRenderingContext2D, x: number, y: number, size: 
 }
 
 function drawTarget(ctx: CanvasRenderingContext2D, layout: SceneLayout, time: number) {
-  const y = layout.floorY - layout.characterHeight * 1.14 + Math.sin(time * 4) * 3;
+  const y = layout.floorY - layout.characterHeight * BOY_SCALE * 1.14 + Math.sin(time * 4) * 3;
   const size = Math.max(6, layout.characterHeight * 0.08);
   ctx.fillStyle = "#efad25";
   ctx.beginPath();
@@ -900,7 +920,7 @@ function drawCarrySequence(
   const transfer = ease(clamp((p - 0.16) / 0.5, 0, 1));
   const stand = ease(clamp((p - 0.5) / 0.45, 0, 1));
   const settle = Math.sin(clamp((p - 0.72) / 0.28, 0, 1) * Math.PI);
-  const boyHeight = layout.characterHeight;
+  const boyHeight = layout.characterHeight * BOY_SCALE;
   const girlHeight = lerp(layout.characterHeight * 0.92, layout.characterHeight * 0.8, transfer);
   const boyX = layout.tableX - boyHeight * 0.12;
   const boyCrouch = crouchIn * (1 - stand);
@@ -975,10 +995,11 @@ function drawWorld(
   if (model.phase === "intro" || model.phase === "walk") {
     drawTable(ctx, layout, 0);
     if (rigs) {
-      drawGroundShadow(ctx, layout.boyX, layout.floorY + 2, layout.characterHeight);
+      const boyHeight = layout.characterHeight * BOY_SCALE;
+      drawGroundShadow(ctx, layout.boyX, layout.floorY + 2, boyHeight);
       drawGroundShadow(ctx, layout.shadowX, layout.floorY + 2, layout.characterHeight * 0.98);
       drawGroundShadow(ctx, width * model.playerX, layout.floorY + 2, layout.characterHeight);
-      drawRig(ctx, rigs.boy, layout.boyX, layout.floorY, layout.characterHeight, idleMotion(model.walkFrame, 0.8));
+      drawRig(ctx, rigs.boy, layout.boyX, layout.floorY, boyHeight, idleMotion(model.walkFrame, 0.8));
       drawRig(ctx, rigs.shadow, layout.shadowX, layout.floorY, layout.characterHeight * 0.98, {
         ...idleMotion(model.walkFrame + 0.35, 0.85),
         headTilt: -0.012,
@@ -1003,6 +1024,7 @@ function drawWorld(
 
   const t = model.cutsceneTime;
   const h = layout.characterHeight;
+  const boyHeight = h * BOY_SCALE;
   let girlX = width * 0.38;
   let girlFoot = layout.floorY;
   let girlHeight = h;
@@ -1304,8 +1326,8 @@ function drawWorld(
       drawRig(ctx, rigs.shadow, shadowX, layout.floorY, h * 0.98, shadowMotion);
     }
     if (boyVisible) {
-      drawGroundShadow(ctx, boyX, layout.floorY + 2, h, 0.27);
-      drawRig(ctx, rigs.boy, boyX, layout.floorY, h, boyMotion);
+      drawGroundShadow(ctx, boyX, layout.floorY + 2, boyHeight, 0.27);
+      drawRig(ctx, rigs.boy, boyX, layout.floorY, boyHeight, boyMotion);
     }
     if (girlVisible) {
       if (girlFoot > layout.floorY - h * 0.2) {
@@ -1364,12 +1386,11 @@ export default function MemoryGame() {
   }, []);
 
   const startGame = useCallback(() => {
-    const restartMusic = modelRef.current.phase === "end";
     modelRef.current = { ...initialModel(), phase: "walk" };
     keysRef.current.left = false;
     keysRef.current.right = false;
     setPhase("walk");
-    playMusicFromCue(restartMusic);
+    playMusicFromCue(false);
     window.setTimeout(() => canvasRef.current?.focus(), 0);
   }, [playMusicFromCue]);
 
@@ -1505,7 +1526,6 @@ export default function MemoryGame() {
         if (model.cutsceneTime >= 35.7) {
           model.phase = "end";
           setPhase("end");
-          audioRef.current?.pause();
         }
       }
 
@@ -1580,7 +1600,7 @@ export default function MemoryGame() {
         playsInline
         onEnded={() => {
           const audio = audioRef.current;
-          if (!audio || !musicEnabledRef.current || modelRef.current.phase === "end") return;
+          if (!audio || !musicEnabledRef.current) return;
           audio.currentTime = 113;
           void audio.play().catch(() => undefined);
         }}

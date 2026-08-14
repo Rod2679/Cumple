@@ -19,8 +19,8 @@
   height: 100svh;
   overflow: hidden;
   background: #efdfb9;
-  isolation: isolate;
   overscroll-behavior: none;
+  isolation: isolate;
 }
 
 .game-canvas {
