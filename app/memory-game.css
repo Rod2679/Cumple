@@ -1,0 +1,326 @@
+.game-page {
+  --ink: #100a13;
+  --cream: #fff0c8;
+  --gold: #efae25;
+  --berry: #8a2447;
+  --plum: #38203f;
+  font-family: "Courier New", Courier, monospace;
+}
+
+.game-page button,
+.game-page canvas {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.game-page {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100svh;
+  overflow: hidden;
+  background: #efdfb9;
+  isolation: isolate;
+  overscroll-behavior: none;
+}
+
+.game-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  outline: none;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  touch-action: none;
+}
+
+.game-canvas:focus-visible {
+  box-shadow: inset 0 0 0 4px var(--gold);
+}
+
+.scene-status {
+  position: absolute;
+  z-index: 4;
+  top: max(18px, env(safe-area-inset-top));
+  left: max(18px, env(safe-area-inset-left));
+  display: flex;
+  min-height: 34px;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 3px solid var(--ink);
+  color: var(--cream);
+  background: rgba(27, 15, 30, 0.9);
+  box-shadow: 4px 4px 0 rgba(16, 10, 19, 0.68);
+  font-size: clamp(0.64rem, 1.6vw, 0.8rem);
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  pointer-events: none;
+}
+
+.scene-status-end {
+  display: none;
+}
+
+.music-button {
+  position: absolute;
+  z-index: 7;
+  top: max(18px, env(safe-area-inset-top));
+  right: max(18px, env(safe-area-inset-right));
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  padding: 0;
+  border: 3px solid var(--ink);
+  color: var(--cream);
+  background: rgba(138, 36, 71, 0.96);
+  box-shadow: 4px 4px 0 var(--ink);
+  font-size: 1.45rem;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.status-light {
+  width: 9px;
+  height: 9px;
+  background: var(--gold);
+  box-shadow: 0 0 0 2px #100a13, 0 0 10px rgba(239, 174, 37, 0.9);
+  animation: status-blink 1.2s steps(2, end) infinite;
+}
+
+.start-overlay,
+.end-overlay {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.start-overlay {
+  background: rgba(16, 10, 19, 0.34);
+  backdrop-filter: blur(1px);
+}
+
+.start-card {
+  display: grid;
+  width: min(420px, 90vw);
+  min-height: 190px;
+  place-items: center;
+  align-content: center;
+  gap: 12px;
+  padding: 26px;
+  border: 4px solid var(--cream);
+  color: var(--cream);
+  background: rgba(28, 15, 31, 0.94);
+  box-shadow: 8px 8px 0 rgba(16, 10, 19, 0.78);
+  text-align: center;
+}
+
+.start-card span {
+  color: var(--gold);
+  font-size: clamp(0.8rem, 2.4vw, 1rem);
+  font-weight: 900;
+  letter-spacing: 0.18em;
+}
+
+.start-card p {
+  margin: 0;
+  font-size: clamp(0.85rem, 2.8vw, 1.05rem);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.start-button,
+.restart-button {
+  min-height: 46px;
+  margin-top: 5px;
+  padding: 10px 20px;
+  border: 3px solid var(--ink);
+  color: var(--ink);
+  background: var(--gold);
+  box-shadow: 4px 4px 0 var(--ink);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.start-button:hover,
+.restart-button:hover {
+  background: #ffc33e;
+}
+
+.start-button:active,
+.restart-button:active,
+.music-button:active,
+.move-button:active:not(:disabled) {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+.start-button:focus-visible,
+.restart-button:focus-visible,
+.music-button:focus-visible,
+.move-button:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 3px;
+}
+
+.end-overlay {
+  align-content: center;
+  gap: 26px;
+  color: var(--cream);
+  background: #050409;
+}
+
+.end-overlay > span {
+  font-size: clamp(2.8rem, 14vw, 7rem);
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  text-shadow: 5px 5px 0 #6f2a58;
+}
+
+.restart-button {
+  color: var(--cream);
+  background: #6f2a58;
+}
+
+.restart-button:hover {
+  background: #903b75;
+}
+
+.touch-controls {
+  position: absolute;
+  z-index: 4;
+  right: max(18px, env(safe-area-inset-right));
+  bottom: max(18px, env(safe-area-inset-bottom));
+  left: max(18px, env(safe-area-inset-left));
+  display: grid;
+  grid-template-columns: 68px 1fr 68px;
+  align-items: end;
+  gap: 16px;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 180ms steps(3, end), transform 180ms steps(3, end);
+  pointer-events: none;
+}
+
+.touch-controls.is-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.move-button {
+  width: 68px;
+  height: 68px;
+  border: 3px solid var(--ink);
+  color: var(--cream);
+  background: rgba(138, 36, 71, 0.96);
+  box-shadow: 4px 4px 0 var(--ink);
+  font-size: 2rem;
+  font-weight: 900;
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+}
+
+.touch-controls:not(.is-active) .move-button {
+  pointer-events: none;
+}
+
+.move-button:disabled {
+  opacity: 0.28;
+  cursor: default;
+}
+
+.keyboard-hint {
+  align-self: center;
+  color: rgba(255, 240, 200, 0.92);
+  font-size: clamp(0.62rem, 1.3vw, 0.78rem);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-shadow: 2px 2px 0 var(--ink);
+  pointer-events: none;
+}
+
+@keyframes status-blink {
+  50% { opacity: 0.35; }
+}
+
+@media (max-width: 720px) {
+  .scene-status {
+    top: max(10px, env(safe-area-inset-top));
+    left: max(10px, env(safe-area-inset-left));
+    min-height: 30px;
+    padding: 6px 9px;
+    border-width: 2px;
+  }
+
+  .music-button {
+    top: max(10px, env(safe-area-inset-top));
+    right: max(10px, env(safe-area-inset-right));
+    width: 38px;
+    height: 38px;
+    border-width: 2px;
+    font-size: 1.25rem;
+  }
+
+  .touch-controls {
+    right: max(12px, env(safe-area-inset-right));
+    bottom: max(12px, env(safe-area-inset-bottom));
+    left: max(12px, env(safe-area-inset-left));
+    grid-template-columns: 64px 1fr 64px;
+    gap: 10px;
+  }
+
+  .move-button {
+    width: 64px;
+    height: 64px;
+  }
+
+  .keyboard-hint {
+    font-size: 0.61rem;
+  }
+
+  .start-card {
+    min-height: 170px;
+    padding: 20px;
+    border-width: 3px;
+  }
+}
+
+@media (max-width: 430px) and (orientation: portrait) {
+  .keyboard-hint {
+    max-width: 160px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-height: 520px) {
+  .scene-status {
+    top: 9px;
+  }
+
+  .touch-controls {
+    bottom: 9px;
+    grid-template-columns: 54px 1fr 54px;
+  }
+
+  .move-button {
+    width: 54px;
+    height: 54px;
+    font-size: 1.55rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status-light {
+    animation: none;
+  }
+}
