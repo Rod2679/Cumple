@@ -91,7 +91,6 @@
   animation: status-blink 1.2s steps(2, end) infinite;
 }
 
-.start-overlay,
 .end-overlay {
   position: absolute;
   z-index: 5;
@@ -101,41 +100,19 @@
   padding: 24px;
 }
 
-.start-overlay {
-  background: rgba(16, 10, 19, 0.34);
-  backdrop-filter: blur(1px);
+.start-reveal {
+  position: absolute;
+  z-index: 6;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: #050409;
+  cursor: pointer;
+  animation: scene-reveal 2.9s cubic-bezier(0.22, 0.72, 0.28, 1) forwards;
 }
 
-.start-card {
-  display: grid;
-  width: min(420px, 90vw);
-  min-height: 190px;
-  place-items: center;
-  align-content: center;
-  gap: 12px;
-  padding: 26px;
-  border: 4px solid var(--cream);
-  color: var(--cream);
-  background: rgba(28, 15, 31, 0.94);
-  box-shadow: 8px 8px 0 rgba(16, 10, 19, 0.78);
-  text-align: center;
-}
-
-.start-card span {
-  color: var(--gold);
-  font-size: clamp(0.8rem, 2.4vw, 1rem);
-  font-weight: 900;
-  letter-spacing: 0.18em;
-}
-
-.start-card p {
-  margin: 0;
-  font-size: clamp(0.85rem, 2.8vw, 1.05rem);
-  font-weight: 700;
-  line-height: 1.5;
-}
-
-.start-button,
 .restart-button {
   min-height: 46px;
   margin-top: 5px;
@@ -149,12 +126,10 @@
   cursor: pointer;
 }
 
-.start-button:hover,
 .restart-button:hover {
   background: #ffc33e;
 }
 
-.start-button:active,
 .restart-button:active,
 .music-button:active,
 .move-button:active:not(:disabled) {
@@ -162,7 +137,6 @@
   box-shadow: 1px 1px 0 var(--ink);
 }
 
-.start-button:focus-visible,
 .restart-button:focus-visible,
 .music-button:focus-visible,
 .move-button:focus-visible {
@@ -253,6 +227,13 @@
   50% { opacity: 0.35; }
 }
 
+@keyframes scene-reveal {
+  0% { opacity: 1; }
+  26% { opacity: 0.96; }
+  68% { opacity: 0.36; }
+  100% { opacity: 0; }
+}
+
 @media (max-width: 720px) {
   .scene-status {
     top: max(10px, env(safe-area-inset-top));
@@ -288,11 +269,6 @@
     font-size: 0.61rem;
   }
 
-  .start-card {
-    min-height: 170px;
-    padding: 20px;
-    border-width: 3px;
-  }
 }
 
 @media (max-width: 430px) and (orientation: portrait) {
@@ -322,5 +298,9 @@
 @media (prefers-reduced-motion: reduce) {
   .status-light {
     animation: none;
+  }
+
+  .start-reveal {
+    animation-duration: 1.2s;
   }
 }

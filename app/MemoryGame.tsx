@@ -25,6 +25,11 @@ type RigPart = {
 type CharacterRig = {
   width: number;
   height: number;
+  palette: {
+    sleeve: string;
+    skin: string;
+    outline: string;
+  };
   head: RigPart;
   torso: RigPart;
   leftArm: RigPart;
@@ -63,7 +68,10 @@ type RigMotion = {
   rightArmX?: number;
   leftArmY?: number;
   rightArmY?: number;
+  leftElbow?: number;
+  rightElbow?: number;
   armsOnTop?: boolean;
+  hideArms?: boolean;
   alpha?: number;
 };
 
@@ -240,83 +248,105 @@ function makePart(
   };
 }
 
-function createRig(source: HTMLCanvasElement, kind: "boy" | "girl"): CharacterRig {
-  if (kind === "boy") {
+function createRig(source: HTMLCanvasElement, kind: "boy" | "girl" | "shadow"): CharacterRig {
+  const palette = kind === "shadow"
+    ? { sleeve: "#09080d", skin: "#0d0c12", outline: "#020205" }
+    : kind === "girl"
+      ? { sleeve: "#8b2949", skin: "#f3c8c2", outline: "#342027" }
+      : { sleeve: "#182326", skin: "#f3c8c2", outline: "#20191b" };
+
+  if (kind !== "girl") {
     return {
-      width: 205,
-      height: 365,
-      head: makePart(source, { x: 0, y: 0, width: 205, height: 196 }, { x: 102, y: 184 }),
-      torso: makePart(source, { x: 48, y: 181, width: 111, height: 107 }, { x: 103, y: 190 }),
+      width: 455,
+      height: 794,
+      palette,
+      head: makePart(source, { x: 0, y: 0, width: 455, height: 430 }, { x: 228, y: 420 }),
+      torso: makePart(
+        source,
+        { x: 95, y: 410, width: 265, height: 215 },
+        { x: 228, y: 420 },
+        [
+          { x: 50, y: 0 }, { x: 215, y: 0 }, { x: 238, y: 24 },
+          { x: 220, y: 64 }, { x: 218, y: 215 }, { x: 47, y: 215 },
+          { x: 45, y: 64 }, { x: 27, y: 24 },
+        ],
+      ),
       leftArm: makePart(
         source,
-        { x: 35, y: 184, width: 40, height: 108 },
-        { x: 63, y: 194 },
-        [{ x: 5, y: 2 }, { x: 32, y: 2 }, { x: 28, y: 106 }, { x: 7, y: 106 }],
+        { x: 74, y: 408, width: 96, height: 225 },
+        { x: 132, y: 423 },
       ),
       rightArm: makePart(
         source,
-        { x: 131, y: 184, width: 40, height: 108 },
-        { x: 143, y: 194 },
-        [{ x: 7, y: 2 }, { x: 34, y: 3 }, { x: 32, y: 106 }, { x: 11, y: 106 }],
+        { x: 286, y: 408, width: 96, height: 225 },
+        { x: 323, y: 423 },
       ),
       leftLeg: makePart(
         source,
-        { x: 51, y: 267, width: 56, height: 98 },
-        { x: 84, y: 274 },
-        [{ x: 0, y: 0 }, { x: 51, y: 0 }, { x: 50, y: 98 }, { x: 0, y: 98 }],
+        { x: 116, y: 603, width: 126, height: 191 },
+        { x: 176, y: 614 },
+        [{ x: 4, y: 0 }, { x: 118, y: 0 }, { x: 112, y: 191 }, { x: 1, y: 191 }],
       ),
       rightLeg: makePart(
         source,
-        { x: 99, y: 267, width: 56, height: 98 },
-        { x: 122, y: 274 },
-        [{ x: 5, y: 0 }, { x: 56, y: 0 }, { x: 56, y: 98 }, { x: 6, y: 98 }],
+        { x: 218, y: 603, width: 126, height: 191 },
+        { x: 279, y: 614 },
+        [{ x: 8, y: 0 }, { x: 122, y: 0 }, { x: 125, y: 191 }, { x: 14, y: 191 }],
       ),
     };
   }
   return {
-    width: 198,
-    height: 360,
-    head: makePart(source, { x: 0, y: 0, width: 198, height: 194 }, { x: 99, y: 183 }),
-    torso: makePart(source, { x: 49, y: 177, width: 101, height: 103 }, { x: 99, y: 188 }),
+    width: 420,
+    height: 744,
+    palette,
+    head: makePart(source, { x: 0, y: 0, width: 420, height: 398 }, { x: 210, y: 390 }),
+    torso: makePart(
+      source,
+      { x: 103, y: 386, width: 214, height: 186 },
+      { x: 210, y: 398 },
+      [
+        { x: 34, y: 0 }, { x: 180, y: 0 }, { x: 198, y: 24 },
+        { x: 177, y: 58 }, { x: 174, y: 186 }, { x: 40, y: 186 },
+        { x: 37, y: 58 }, { x: 16, y: 24 },
+      ],
+    ),
     leftArm: makePart(
       source,
-      { x: 31, y: 178, width: 42, height: 105 },
-      { x: 62, y: 190 },
-      [{ x: 5, y: 2 }, { x: 35, y: 2 }, { x: 29, y: 103 }, { x: 7, y: 103 }],
+      { x: 69, y: 387, width: 92, height: 205 },
+      { x: 124, y: 400 },
     ),
     rightArm: makePart(
       source,
-      { x: 126, y: 178, width: 42, height: 105 },
-      { x: 137, y: 190 },
-      [{ x: 7, y: 2 }, { x: 37, y: 2 }, { x: 35, y: 103 }, { x: 13, y: 103 }],
+      { x: 259, y: 387, width: 92, height: 205 },
+      { x: 296, y: 400 },
     ),
     leftLeg: makePart(
       source,
-      { x: 49, y: 258, width: 55, height: 102 },
-      { x: 82, y: 266 },
-      [{ x: 0, y: 0 }, { x: 50, y: 0 }, { x: 49, y: 102 }, { x: 0, y: 102 }],
+      { x: 103, y: 532, width: 117, height: 212 },
+      { x: 159, y: 544 },
+      [{ x: 3, y: 0 }, { x: 111, y: 0 }, { x: 108, y: 212 }, { x: 0, y: 212 }],
     ),
     rightLeg: makePart(
       source,
-      { x: 96, y: 258, width: 55, height: 102 },
-      { x: 117, y: 266 },
-      [{ x: 4, y: 0 }, { x: 55, y: 0 }, { x: 55, y: 102 }, { x: 5, y: 102 }],
+      { x: 200, y: 532, width: 117, height: 212 },
+      { x: 261, y: 544 },
+      [{ x: 6, y: 0 }, { x: 114, y: 0 }, { x: 117, y: 212 }, { x: 9, y: 212 }],
     ),
   };
 }
 
 function getLayout(width: number, height: number): SceneLayout {
   const portrait = width / height < 0.78;
-  const floorY = height * 0.835;
-  const shelfWidth = width * (portrait ? 0.28 : 0.255);
-  const shelfTop = height * (portrait ? 0.16 : 0.14);
+  const floorY = height * 0.85;
+  const shelfWidth = width * (portrait ? 0.245 : 0.215);
+  const shelfTop = height * (portrait ? 0.18 : 0.145);
   const shelfHeight = floorY - shelfTop + height * 0.025;
   const characterHeight = clamp(
-    Math.min(height * (portrait ? 0.265 : 0.33), width * (portrait ? 0.35 : 0.19)),
-    72,
-    168,
+    Math.min(height * (portrait ? 0.29 : 0.35), width * (portrait ? 0.38 : 0.205)),
+    92,
+    portrait ? 220 : 260,
   );
-  const tableX = width * 0.63;
+  const tableX = width * (portrait ? 0.61 : 0.62);
   return {
     width,
     height,
@@ -327,13 +357,13 @@ function getLayout(width: number, height: number): SceneLayout {
     characterHeight,
     tableX,
     tableTop: floorY - characterHeight * 0.56,
-    boyX: width * (portrait ? 0.44 : 0.515),
-    shadowX: width * (portrait ? 0.76 : 0.755),
-    triggerX: width * (portrait ? 0.34 : 0.405),
+    boyX: width * (portrait ? 0.42 : 0.5),
+    shadowX: width * (portrait ? 0.75 : 0.72),
+    triggerX: width * (portrait ? 0.33 : 0.38),
   };
 }
 
-function drawPapelPicado(ctx: CanvasRenderingContext2D, layout: SceneLayout) {
+function drawPapelPicado(ctx: CanvasRenderingContext2D, layout: SceneLayout, time: number) {
   const colors = ["#2374ae", "#3e9e59", "#e7ad1f", "#ce3c35", "#e36f22", "#7f42a3"];
   const portrait = layout.width / layout.height < 0.78;
   const rows = portrait ? 2 : 3;
@@ -352,11 +382,17 @@ function drawPapelPicado(ctx: CanvasRenderingContext2D, layout: SceneLayout) {
     for (let index = 0; index < count; index += 1) {
       const x = gap * index + gap / 2 - bannerW / 2;
       const curve = Math.sin((index / Math.max(1, count - 1)) * Math.PI) * layout.height * 0.026;
-      const top = y + curve;
-      rect(ctx, x, top, bannerW, bannerH, colors[(index + row * 2) % colors.length]);
+      const flutter = Math.sin(time * 1.8 + index * 0.83 + row) * bannerH * 0.025;
+      const top = y + curve + flutter;
+      const bannerColor = colors[(index + row * 2) % colors.length];
+      rect(ctx, x + bannerW * 0.06, top + bannerH * 0.06, bannerW, bannerH, "rgba(57,35,38,.16)");
+      rect(ctx, x, top, bannerW, bannerH, bannerColor);
+      rect(ctx, x + bannerW * 0.48, top, bannerW * 0.05, bannerH, "rgba(255,255,255,.12)");
       rect(ctx, x + bannerW * 0.2, top + bannerH * 0.25, bannerW * 0.16, bannerH * 0.16, "#efdfb9");
       rect(ctx, x + bannerW * 0.64, top + bannerH * 0.25, bannerW * 0.16, bannerH * 0.16, "#efdfb9");
       rect(ctx, x + bannerW * 0.42, top + bannerH * 0.58, bannerW * 0.16, bannerH * 0.18, "#efdfb9");
+      rect(ctx, x + bannerW * 0.12, top + bannerH * 0.69, bannerW * 0.12, bannerH * 0.16, "#efdfb9");
+      rect(ctx, x + bannerW * 0.76, top + bannerH * 0.69, bannerW * 0.12, bannerH * 0.16, "#efdfb9");
     }
   }
 }
@@ -370,10 +406,14 @@ function drawBookcase(
   seed: number,
 ) {
   const frame = Math.max(5, width * 0.052);
+  rect(ctx, x + width * 0.04, y + height, width * 0.18, frame * 0.8, "#241511");
+  rect(ctx, x + width * 0.78, y + height, width * 0.18, frame * 0.8, "#241511");
   rect(ctx, x - frame * 0.45, y - frame * 0.35, width + frame * 0.9, height + frame * 0.7, "#2a1712");
   rect(ctx, x, y, width, height, "#60371f");
+  rect(ctx, x + frame * 0.45, y + frame * 0.45, width - frame * 0.9, frame * 0.32, "#a86939");
   rect(ctx, x + frame, y + frame, width - frame * 2, height - frame * 1.45, "#211718");
   rect(ctx, x + frame * 0.3, y - frame * 0.2, width - frame * 0.6, frame * 0.75, "#87502b");
+  rect(ctx, x + frame * 0.8, y - frame * 0.04, width - frame * 1.6, frame * 0.16, "#b1703d");
   const innerTop = y + frame * 1.4;
   const rowHeight = (height - frame * 2) / 4;
   const bookColors = ["#a83331", "#155a82", "#cf9722", "#5e3d87", "#397749", "#b84c1f", "#704039"];
@@ -390,6 +430,7 @@ function drawBookcase(
       const bookHeight = rowHeight * (0.55 + ((book * 3 + shelf + seed) % 5) * 0.055);
       const color = bookColors[(book + shelf * 2 + seed) % bookColors.length];
       rect(ctx, cursor, shelfBottom - frame * 0.45 - bookHeight, bookWidth, bookHeight, color);
+      rect(ctx, cursor + Math.max(1, bookWidth * 0.14), shelfBottom - frame * 0.45 - bookHeight, Math.max(1, bookWidth * 0.12), bookHeight, "rgba(255,255,255,.12)");
       if ((book + shelf) % 3 === 0) {
         rect(ctx, cursor + bookWidth * 0.25, shelfBottom - bookHeight * 0.66, bookWidth * 0.5, Math.max(1, bookHeight * 0.035), "#e1b04c");
       }
@@ -397,11 +438,21 @@ function drawBookcase(
       book += 1;
     }
   }
+
+  const labelWidth = width * 0.24;
+  rect(ctx, x + width / 2 - labelWidth / 2 - 2, y + frame * 0.98, labelWidth + 4, frame * 0.58, "#291815");
+  rect(ctx, x + width / 2 - labelWidth / 2, y + frame * 1.04, labelWidth, frame * 0.38, "#c08a3f");
 }
 
-function drawFrontRoom(ctx: CanvasRenderingContext2D, layout: SceneLayout) {
+function drawFrontRoom(ctx: CanvasRenderingContext2D, layout: SceneLayout, time: number) {
   const { width, height, floorY, shelfTop, shelfWidth, shelfHeight } = layout;
   rect(ctx, 0, 0, width, height, "#efdfb9");
+  const ceilingGlow = ctx.createLinearGradient(0, 0, 0, floorY);
+  ceilingGlow.addColorStop(0, "rgba(255,250,221,.42)");
+  ceilingGlow.addColorStop(0.6, "rgba(255,250,221,0)");
+  ceilingGlow.addColorStop(1, "rgba(91,55,39,.07)");
+  ctx.fillStyle = ceilingGlow;
+  ctx.fillRect(0, 0, width, floorY);
   rect(ctx, 0, floorY - height * 0.018, width, height * 0.025, "#b29b78");
   rect(ctx, 0, floorY, width, height - floorY, "#4d443f");
 
@@ -417,23 +468,55 @@ function drawFrontRoom(ctx: CanvasRenderingContext2D, layout: SceneLayout) {
   const panelWidth = width * 0.24;
   rect(ctx, width / 2 - panelWidth / 2, height * 0.23, panelWidth, height * 0.34, "rgba(207,177,128,.18)");
   rect(ctx, width / 2 - panelWidth / 2, height * 0.23, panelWidth, Math.max(2, width * 0.004), "#d3b786");
-  drawPapelPicado(ctx, layout);
+  drawPapelPicado(ctx, layout, time);
   drawBookcase(ctx, width * 0.025, shelfTop, shelfWidth, shelfHeight, 1);
   drawBookcase(ctx, width - width * 0.025 - shelfWidth, shelfTop, shelfWidth, shelfHeight, 4);
+
+  const aisleLight = ctx.createRadialGradient(width * 0.53, floorY * 0.48, 0, width * 0.53, floorY * 0.48, width * 0.48);
+  aisleLight.addColorStop(0, "rgba(255,244,199,.12)");
+  aisleLight.addColorStop(1, "rgba(255,244,199,0)");
+  ctx.fillStyle = aisleLight;
+  ctx.fillRect(0, 0, width, floorY);
 }
 
 function drawTable(ctx: CanvasRenderingContext2D, layout: SceneLayout, shake: number) {
   const width = layout.characterHeight * 0.78;
   const height = layout.floorY - layout.tableTop;
-  const wobble = Math.sin(shake * 15) * Math.min(layout.characterHeight * 0.02, shake * 2);
-  const x = layout.tableX + wobble;
+  const shakeAmount = clamp(shake, 0, 1.5);
+  const wobble = Math.sin(shake * 15) * layout.characterHeight * 0.012 * shakeAmount;
+  const tilt = Math.sin(shake * 12.5) * 0.012 * shakeAmount;
   const topThickness = Math.max(5, layout.characterHeight * 0.055);
-  rect(ctx, x - width / 2 - 3, layout.tableTop - 3, width + 6, topThickness + 6, "#2f1a13");
-  rect(ctx, x - width / 2, layout.tableTop, width, topThickness, "#714124");
-  rect(ctx, x - width * 0.39, layout.tableTop + topThickness, width * 0.075, height - topThickness, "#4b2a1d");
-  rect(ctx, x + width * 0.315, layout.tableTop + topThickness, width * 0.075, height - topThickness, "#4b2a1d");
-  rect(ctx, x - width * 0.29, layout.tableTop + topThickness, width * 0.06, height * 0.86, "#724126");
-  rect(ctx, x + width * 0.23, layout.tableTop + topThickness, width * 0.06, height * 0.86, "#724126");
+
+  ctx.save();
+  ctx.globalAlpha = 0.28;
+  ctx.fillStyle = "#110b14";
+  ctx.beginPath();
+  ctx.ellipse(layout.tableX, layout.floorY + 2, width * 0.57, height * 0.09, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  ctx.save();
+  ctx.translate(Math.round(layout.tableX + wobble), Math.round(layout.tableTop));
+  ctx.rotate(tilt);
+
+  rect(ctx, -width * 0.29, topThickness, width * 0.065, height * 0.86, "#4a2a1d");
+  rect(ctx, width * 0.225, topThickness, width * 0.065, height * 0.86, "#4a2a1d");
+  rect(ctx, -width * 0.38, topThickness, width * 0.082, height - topThickness, "#724126");
+
+  ctx.fillStyle = "#5a3220";
+  ctx.beginPath();
+  ctx.moveTo(width * 0.3, topThickness);
+  ctx.lineTo(width * 0.385, topThickness);
+  ctx.lineTo(width * 0.45, height * 0.98);
+  ctx.lineTo(width * 0.365, height * 0.98);
+  ctx.closePath();
+  ctx.fill();
+
+  rect(ctx, -width / 2 - 3, -3, width + 6, topThickness + 6, "#2f1a13");
+  rect(ctx, -width / 2, 0, width, topThickness, "#714124");
+  rect(ctx, -width * 0.44, topThickness * 0.24, width * 0.76, Math.max(1, topThickness * 0.17), "#a26739");
+  rect(ctx, -width * 0.16, topThickness * 0.64, width * 0.3, Math.max(1, topThickness * 0.12), "#45251a");
+  ctx.restore();
 }
 
 function drawPart(
@@ -454,6 +537,76 @@ function drawPart(
     part.height,
   );
   ctx.restore();
+}
+
+function drawArmSegment(
+  ctx: CanvasRenderingContext2D,
+  fromX: number,
+  fromY: number,
+  toX: number,
+  toY: number,
+  width: number,
+  color: string,
+) {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.lineCap = "square";
+  ctx.lineJoin = "miter";
+  ctx.beginPath();
+  ctx.moveTo(Math.round(fromX), Math.round(fromY));
+  ctx.lineTo(Math.round(toX), Math.round(toY));
+  ctx.stroke();
+}
+
+function drawJointedArm(
+  ctx: CanvasRenderingContext2D,
+  rig: CharacterRig,
+  side: "left" | "right",
+  angle: number,
+  elbowBend: number,
+  offsetX = 0,
+  offsetY = 0,
+) {
+  const part = side === "left" ? rig.leftArm : rig.rightArm;
+  const shoulderX = part.pivotX + offsetX;
+  const shoulderY = part.pivotY + offsetY;
+  const upperLength = part.height * 0.4;
+  const forearmLength = part.height * 0.34;
+  const wristLength = part.height * 0.075;
+  const elbowX = shoulderX + Math.sin(angle) * upperLength;
+  const elbowY = shoulderY + Math.cos(angle) * upperLength;
+  const forearmAngle = angle + elbowBend;
+  const wristX = elbowX + Math.sin(forearmAngle) * forearmLength;
+  const wristY = elbowY + Math.cos(forearmAngle) * forearmLength;
+  const handX = wristX + Math.sin(forearmAngle) * wristLength;
+  const handY = wristY + Math.cos(forearmAngle) * wristLength;
+  const upperWidth = part.width * 0.44;
+  const forearmWidth = part.width * 0.35;
+  const wristWidth = part.width * 0.22;
+  const outline = Math.max(3, part.width * 0.095);
+
+  drawArmSegment(ctx, shoulderX, shoulderY, elbowX, elbowY, upperWidth + outline, rig.palette.outline);
+  drawArmSegment(ctx, elbowX, elbowY, wristX, wristY, forearmWidth + outline, rig.palette.outline);
+  drawArmSegment(ctx, wristX, wristY, handX, handY, wristWidth + outline * 0.7, rig.palette.outline);
+  drawArmSegment(ctx, shoulderX, shoulderY, elbowX, elbowY, upperWidth, rig.palette.sleeve);
+  drawArmSegment(ctx, elbowX, elbowY, wristX, wristY, forearmWidth, rig.palette.sleeve);
+  drawArmSegment(ctx, wristX, wristY, handX, handY, wristWidth, rig.palette.skin);
+
+  const handSize = part.width * 0.29;
+  ctx.fillStyle = rig.palette.outline;
+  ctx.fillRect(
+    Math.round(handX - handSize * 0.58),
+    Math.round(handY - handSize * 0.58),
+    Math.round(handSize * 1.16),
+    Math.round(handSize * 1.16),
+  );
+  ctx.fillStyle = rig.palette.skin;
+  ctx.fillRect(
+    Math.round(handX - handSize * 0.42),
+    Math.round(handY - handSize * 0.42),
+    Math.round(handSize * 0.84),
+    Math.round(handSize * 0.84),
+  );
 }
 
 function applyRigTransform(
@@ -491,36 +644,23 @@ function drawRig(
   const rightLegAngle = motion.rightLegAngle ?? -legSwing;
   const leftArmAngle = motion.leftArmAngle ?? -armSwing;
   const rightArmAngle = motion.rightArmAngle ?? armSwing;
+  const leftElbow = motion.leftElbow ?? -0.08;
+  const rightElbow = motion.rightElbow ?? 0.08;
 
   ctx.save();
   applyRigTransform(ctx, rig, centerX, footY, height, motion);
   drawPart(ctx, rig.leftLeg, leftLegAngle, motion.leftLegX, motion.leftLegY);
   drawPart(ctx, rig.rightLeg, rightLegAngle, motion.rightLegX, motion.rightLegY);
-  if (!motion.armsOnTop) {
-    drawPart(ctx, rig.leftArm, leftArmAngle, motion.leftArmX, motion.leftArmY);
-    drawPart(ctx, rig.rightArm, rightArmAngle, motion.rightArmX, motion.rightArmY);
+  if (!motion.hideArms && !motion.armsOnTop) {
+    drawJointedArm(ctx, rig, "left", leftArmAngle, leftElbow, motion.leftArmX, motion.leftArmY);
+    drawJointedArm(ctx, rig, "right", rightArmAngle, rightElbow, motion.rightArmX, motion.rightArmY);
   }
   ctx.drawImage(rig.torso.image, rig.torso.x, rig.torso.y, rig.torso.width, rig.torso.height);
   drawPart(ctx, rig.head, motion.headTilt ?? 0, motion.headX, motion.headBob);
-  if (motion.armsOnTop) {
-    drawPart(ctx, rig.leftArm, leftArmAngle, motion.leftArmX, motion.leftArmY);
-    drawPart(ctx, rig.rightArm, rightArmAngle, motion.rightArmX, motion.rightArmY);
+  if (!motion.hideArms && motion.armsOnTop) {
+    drawJointedArm(ctx, rig, "left", leftArmAngle, leftElbow, motion.leftArmX, motion.leftArmY);
+    drawJointedArm(ctx, rig, "right", rightArmAngle, rightElbow, motion.rightArmX, motion.rightArmY);
   }
-  ctx.restore();
-}
-
-function drawRigArmsOverlay(
-  ctx: CanvasRenderingContext2D,
-  rig: CharacterRig,
-  centerX: number,
-  footY: number,
-  height: number,
-  motion: RigMotion,
-) {
-  ctx.save();
-  applyRigTransform(ctx, rig, centerX, footY, height, motion);
-  drawPart(ctx, rig.leftArm, motion.leftArmAngle ?? 0, motion.leftArmX, motion.leftArmY);
-  drawPart(ctx, rig.rightArm, motion.rightArmAngle ?? 0, motion.rightArmX, motion.rightArmY);
   ctx.restore();
 }
 
@@ -528,21 +668,26 @@ function walkMotion(time: number, strength = 1): RigMotion {
   const phase = time * Math.PI * 2;
   const step = Math.sin(phase);
   const contact = Math.abs(Math.sin(phase));
-  const leftLift = Math.max(0, -Math.cos(phase)) * 5.5 * strength;
-  const rightLift = Math.max(0, Math.cos(phase)) * 5.5 * strength;
+  const leftLift = Math.max(0, -Math.cos(phase)) * 6.5 * strength;
+  const rightLift = Math.max(0, Math.cos(phase)) * 6.5 * strength;
   return {
-    bob: contact * 1.8 * strength,
-    bodyRotation: -step * 0.018 * strength,
-    headBob: contact * 1.5 * strength,
-    headTilt: step * 0.02 * strength,
-    scaleX: 1 + contact * 0.006 * strength,
-    scaleY: 1 - contact * 0.01 * strength,
-    leftLegAngle: step * 0.19 * strength,
-    rightLegAngle: -step * 0.19 * strength,
+    bob: contact * 2.15 * strength,
+    bodyX: step * 0.8 * strength,
+    bodyRotation: -step * 0.011 * strength,
+    headBob: contact * 1.25 * strength,
+    headTilt: step * 0.013 * strength,
+    scaleX: 1 + contact * 0.004 * strength,
+    scaleY: 1 - contact * 0.008 * strength,
+    leftLegAngle: step * 0.085 * strength,
+    rightLegAngle: -step * 0.085 * strength,
+    leftLegX: -Math.max(0, -Math.cos(phase)) * 2.4 * strength,
+    rightLegX: Math.max(0, Math.cos(phase)) * 2.4 * strength,
     leftLegY: -leftLift,
     rightLegY: -rightLift,
-    leftArmAngle: -step * 0.15 * strength,
-    rightArmAngle: step * 0.15 * strength,
+    leftArmAngle: -step * 0.1 * strength,
+    rightArmAngle: step * 0.1 * strength,
+    leftElbow: -0.075 - contact * 0.025,
+    rightElbow: 0.075 + contact * 0.025,
   };
 }
 
@@ -579,6 +724,20 @@ function drawCinematicLighting(
 ) {
   const amount = clamp(intensity, 0, 1);
   if (amount <= 0) return;
+  const warmth = ctx.createRadialGradient(
+    layout.tableX,
+    layout.floorY - layout.characterHeight * 0.72,
+    0,
+    layout.tableX,
+    layout.floorY - layout.characterHeight * 0.72,
+    layout.characterHeight * 2.4,
+  );
+  warmth.addColorStop(0, `rgba(255, 209, 119, ${0.085 * amount})`);
+  warmth.addColorStop(0.45, `rgba(255, 222, 153, ${0.025 * amount})`);
+  warmth.addColorStop(1, "rgba(255, 222, 153, 0)");
+  ctx.fillStyle = warmth;
+  ctx.fillRect(0, 0, layout.width, layout.height);
+
   const glow = ctx.createRadialGradient(
     layout.tableX,
     layout.floorY - layout.characterHeight * 0.62,
@@ -592,6 +751,55 @@ function drawCinematicLighting(
   glow.addColorStop(1, `rgba(17, 9, 20, ${0.19 * amount})`);
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, layout.width, layout.height);
+}
+
+function drawAtmosphere(
+  ctx: CanvasRenderingContext2D,
+  layout: SceneLayout,
+  time: number,
+  intensity = 1,
+) {
+  const count = layout.width / layout.height < 0.78 ? 10 : 18;
+  ctx.save();
+  for (let index = 0; index < count; index += 1) {
+    const seed = (index * 47) % 101;
+    const travel = (time * (0.018 + (index % 4) * 0.004) + seed / 101) % 1;
+    const xBase = layout.width * (0.16 + ((index * 37) % 73) / 107);
+    const x = xBase + Math.sin(time * 0.55 + index * 1.7) * layout.characterHeight * 0.08;
+    const y = lerp(layout.floorY * 0.92, layout.height * 0.2, travel);
+    const size = Math.max(1, layout.characterHeight * (0.006 + (index % 3) * 0.002));
+    ctx.globalAlpha = (0.08 + (index % 4) * 0.025) * intensity * Math.sin(travel * Math.PI);
+    rect(ctx, x, y, size, size, index % 3 === 0 ? "#fff2bd" : "#f2c76f");
+  }
+  ctx.restore();
+}
+
+function drawInstabilityMarks(
+  ctx: CanvasRenderingContext2D,
+  layout: SceneLayout,
+  amount: number,
+  time: number,
+) {
+  const p = clamp(amount, 0, 1);
+  if (p <= 0) return;
+  const size = layout.characterHeight;
+  ctx.save();
+  ctx.globalAlpha = 0.3 + p * 0.5;
+  ctx.strokeStyle = "#7b3f2e";
+  ctx.lineWidth = Math.max(2, size * 0.014);
+  ctx.lineCap = "square";
+  const pulse = Math.sin(time * 15) * size * 0.018;
+  for (const side of [-1, 1]) {
+    const x = layout.tableX + side * (size * 0.48 + pulse);
+    const y = layout.tableTop + size * 0.22;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + side * size * 0.07, y - size * 0.045);
+    ctx.moveTo(x + side * size * 0.012, y + size * 0.055);
+    ctx.lineTo(x + side * size * 0.09, y + size * 0.08);
+    ctx.stroke();
+  }
+  ctx.restore();
 }
 
 function drawDecorativeStrip(
@@ -689,45 +897,64 @@ function drawCarrySequence(
 ) {
   const p = clamp(progress, 0, 1);
   const crouchIn = ease(clamp(p / 0.25, 0, 1));
-  const transfer = ease(clamp((p - 0.18) / 0.52, 0, 1));
-  const stand = ease(clamp((p - 0.68) / 0.32, 0, 1));
+  const transfer = ease(clamp((p - 0.16) / 0.5, 0, 1));
+  const stand = ease(clamp((p - 0.5) / 0.45, 0, 1));
+  const settle = Math.sin(clamp((p - 0.72) / 0.28, 0, 1) * Math.PI);
   const boyHeight = layout.characterHeight;
-  const girlHeight = lerp(layout.characterHeight * 0.92, layout.characterHeight * 0.78, transfer);
+  const girlHeight = lerp(layout.characterHeight * 0.92, layout.characterHeight * 0.8, transfer);
   const boyX = layout.tableX - boyHeight * 0.12;
   const boyCrouch = crouchIn * (1 - stand);
-  const girlX = lerp(layout.tableX, boyX + boyHeight * 0.12, transfer);
-  const girlFoot = lerp(layout.tableTop, layout.floorY - boyHeight * 0.12, transfer);
+  const girlX = lerp(layout.tableX, boyX + boyHeight * 0.255, transfer);
+  const girlFoot = lerp(
+    layout.tableTop,
+    layout.floorY - boyHeight * 0.4,
+    transfer,
+  ) - Math.sin(transfer * Math.PI) * boyHeight * 0.06 - settle * boyHeight * 0.012;
   const girlMotion: RigMotion = {
-    bodyRotation: lerp(-0.03, -0.035, transfer),
+    bodyRotation: lerp(-0.03, 0.025, transfer),
     bob: Math.sin(transfer * Math.PI) * boyHeight * 0.035,
     scaleY: lerp(1, 0.96, transfer),
-    leftArmAngle: lerp(1.18, -1.12, transfer),
-    rightArmAngle: lerp(-1.18, 1.12, transfer),
-    leftArmY: transfer * 18,
-    rightArmY: transfer * 18,
-    leftLegAngle: lerp(0.02, 0.62, transfer),
-    rightLegAngle: lerp(-0.02, -0.62, transfer),
-    leftLegY: -transfer * 42,
-    rightLegY: -transfer * 42,
+    leftArmAngle: lerp(-1.12, -0.48, transfer),
+    rightArmAngle: lerp(1.12, -0.34, transfer),
+    leftElbow: lerp(-0.3, -0.16, transfer),
+    rightElbow: lerp(0.3, -0.12, transfer),
+    leftArmY: transfer * 9,
+    rightArmY: transfer * 9,
+    leftLegAngle: lerp(0.02, 0.5, transfer),
+    rightLegAngle: lerp(-0.02, -0.5, transfer),
+    leftLegY: -transfer * 38,
+    rightLegY: -transfer * 38,
     headTilt: -0.02 * transfer,
   };
   const boyMotion: RigMotion = {
-    bodyY: boyCrouch * boyHeight * 0.08,
+    bodyY: boyCrouch * boyHeight * 0.08 + settle * boyHeight * 0.012,
     scaleY: 1 - boyCrouch * 0.11,
     scaleX: 1 + boyCrouch * 0.055,
-    bodyRotation: lerp(0, 0.025, transfer),
+    bodyRotation: lerp(0, 0.018, transfer),
     leftLegAngle: boyCrouch * 0.11,
     rightLegAngle: -boyCrouch * 0.11,
-    leftArmAngle: lerp(0, 0.62, transfer),
-    rightArmAngle: lerp(0, -0.62, transfer),
+    leftArmAngle: lerp(0, -0.22, transfer),
+    rightArmAngle: lerp(0, 0.38, transfer),
+    leftElbow: lerp(-0.08, -0.12, transfer),
+    rightElbow: lerp(0.08, 0.16, transfer),
     headBob: boyCrouch * 3,
   };
 
   drawGroundShadow(ctx, boyX, layout.floorY + 2, boyHeight, 0.31);
   drawRig(ctx, rigs.girl, girlX, girlFoot, girlHeight, girlMotion);
   drawRig(ctx, rigs.boy, boyX, layout.floorY, boyHeight, boyMotion);
-  if (transfer > 0.38) {
-    drawRigArmsOverlay(ctx, rigs.girl, girlX, girlFoot, girlHeight, girlMotion);
+
+  if (transfer > 0.42) {
+    const grip = ease((transfer - 0.42) / 0.4);
+    const handSize = Math.max(5, boyHeight * 0.032);
+    const handY = layout.floorY - boyHeight * 0.57;
+    ctx.save();
+    ctx.globalAlpha = grip;
+    for (const handX of [boyX - boyHeight * 0.17, boyX + boyHeight * 0.2]) {
+      rect(ctx, handX - handSize * 0.62, handY - handSize * 0.62, handSize * 1.24, handSize * 1.24, rigs.girl.palette.outline);
+      rect(ctx, handX - handSize * 0.42, handY - handSize * 0.42, handSize * 0.84, handSize * 0.84, rigs.girl.palette.skin);
+    }
+    ctx.restore();
   }
 }
 
@@ -739,9 +966,11 @@ function drawWorld(
   const width = ctx.canvas.width;
   const height = ctx.canvas.height;
   const layout = getLayout(width, height);
+  const sceneTime = model.phase === "cinematic" ? model.cutsceneTime : model.walkFrame;
   ctx.clearRect(0, 0, width, height);
   ctx.imageSmoothingEnabled = false;
-  drawFrontRoom(ctx, layout);
+  drawFrontRoom(ctx, layout, sceneTime);
+  drawAtmosphere(ctx, layout, sceneTime, model.phase === "cinematic" ? 1 : 0.65);
 
   if (model.phase === "intro" || model.phase === "walk") {
     drawTable(ctx, layout, 0);
@@ -774,7 +1003,7 @@ function drawWorld(
 
   const t = model.cutsceneTime;
   const h = layout.characterHeight;
-  let girlX = width * 0.43;
+  let girlX = width * 0.38;
   let girlFoot = layout.floorY;
   let girlHeight = h;
   let girlMotion: RigMotion = idleMotion(t * 0.45, 0.75);
@@ -797,16 +1026,20 @@ function drawWorld(
       ...idleMotion(t * 0.7, 0.65),
       bodyRotation: -0.018,
       armsOnTop: true,
-      leftArmAngle: 2.67 + reachPulse,
-      rightArmAngle: -2.56 - reachPulse * 0.7,
+      leftArmAngle: -2.46 - reachPulse,
+      rightArmAngle: 2.62 + reachPulse * 0.7,
+      leftElbow: -0.18,
+      rightElbow: 0.14,
       headTilt: 0.018,
     };
     shadowMotion = {
       ...idleMotion(t * 0.7 + 0.25, 0.65),
       bodyRotation: 0.018,
       armsOnTop: true,
-      leftArmAngle: 2.54 - reachPulse * 0.7,
-      rightArmAngle: -2.68 + reachPulse,
+      leftArmAngle: -2.62 + reachPulse * 0.7,
+      rightArmAngle: 2.46 - reachPulse,
+      leftElbow: -0.14,
+      rightElbow: 0.18,
       headTilt: -0.018,
     };
     girlMotion = {
@@ -818,10 +1051,27 @@ function drawWorld(
 
   if (t >= 4.5 && t < 6.9) {
     const p = ease((t - 4.5) / 2.4);
-    girlX = lerp(width * 0.43, layout.tableX - h * 0.14, p);
+    const release = ease(clamp(p / 0.58, 0, 1));
+    girlX = lerp(width * 0.38, layout.tableX - h * 0.14, p);
     girlMotion = walkMotion((t - 4.5) * 1.55, 0.95);
-    boyMotion = { ...idleMotion(t * 0.45, 0.7), headTilt: 0.015 };
-    shadowMotion = { ...idleMotion(t * 0.45 + 0.3, 0.7), headTilt: -0.015 };
+    boyMotion = {
+      ...idleMotion(t * 0.45, 0.7),
+      armsOnTop: release < 0.72,
+      leftArmAngle: lerp(-2.46, 0, release),
+      rightArmAngle: lerp(2.62, 0, release),
+      leftElbow: lerp(-0.18, -0.08, release),
+      rightElbow: lerp(0.14, 0.08, release),
+      headTilt: 0.015,
+    };
+    shadowMotion = {
+      ...idleMotion(t * 0.45 + 0.3, 0.7),
+      armsOnTop: release < 0.72,
+      leftArmAngle: lerp(-2.62, 0, release),
+      rightArmAngle: lerp(2.46, 0, release),
+      leftElbow: lerp(-0.14, -0.08, release),
+      rightElbow: lerp(0.18, 0.08, release),
+      headTilt: -0.015,
+    };
   }
 
   if (t >= 6.9 && t < 8.8) {
@@ -837,8 +1087,8 @@ function drawWorld(
       leftLegAngle: Math.sin(p * Math.PI) * 0.28,
       rightLegAngle: -Math.sin(p * Math.PI) * 0.2,
       leftLegY: -Math.sin(p * Math.PI) * 7,
-      rightArmAngle: -1.2 - p * 1.25,
-      leftArmAngle: 0.9 + p * 0.4,
+      rightArmAngle: 1.2 + p * 1.12,
+      leftArmAngle: -0.9 - p * 0.34,
       headTilt: -0.025,
     };
   }
@@ -852,8 +1102,8 @@ function drawWorld(
       bodyY: Math.sin(p * Math.PI) * 2,
       scaleX: 1 + (1 - p) * 0.045,
       scaleY: 0.94 + p * 0.06,
-      leftArmAngle: lerp(1.3, 0.2, p),
-      rightArmAngle: lerp(-2.45, -0.25, p),
+      leftArmAngle: lerp(-1.24, -0.2, p),
+      rightArmAngle: lerp(2.32, 0.25, p),
       headTilt: lerp(-0.03, 0.015, p),
     };
   }
@@ -869,8 +1119,10 @@ function drawWorld(
       bodyRotation: Math.sin(p * Math.PI * 2) * 0.009,
       armsOnTop: true,
       scaleY: 1 + unfold * 0.018,
-      leftArmAngle: lerp(0.18, 2.92, clamp(p / 0.58, 0, 1)),
-      rightArmAngle: lerp(-0.18, -2.92, clamp((p - 0.12) / 0.72, 0, 1)),
+      leftArmAngle: lerp(-0.18, -2.68, clamp(p / 0.58, 0, 1)),
+      rightArmAngle: lerp(0.18, 2.68, clamp((p - 0.12) / 0.72, 0, 1)),
+      leftElbow: lerp(-0.08, -0.16, p),
+      rightElbow: lerp(0.08, 0.16, p),
       leftArmY: -p * 2,
       rightArmY: -p * 2,
       headTilt: Math.sin(p * Math.PI) * -0.025,
@@ -891,8 +1143,10 @@ function drawWorld(
       scaleY: 1 - p * 0.065,
       leftLegAngle: p * 0.1,
       rightLegAngle: -p * 0.1,
-      leftArmAngle: lerp(2.92, 1.22, p),
-      rightArmAngle: lerp(-2.92, -1.22, p),
+      leftArmAngle: lerp(-2.68, -1.12, p),
+      rightArmAngle: lerp(2.68, 1.12, p),
+      leftElbow: lerp(-0.16, -0.28, p),
+      rightElbow: lerp(0.16, 0.28, p),
       headTilt: -0.04 * p,
     };
   }
@@ -909,8 +1163,10 @@ function drawWorld(
       scaleY: 0.95,
       leftLegAngle: 0.11 + Math.sin(t * 7) * 0.035,
       rightLegAngle: -0.11 - Math.sin(t * 7) * 0.035,
-      leftArmAngle: 1.25 + Math.sin(t * 6) * 0.08,
-      rightArmAngle: -1.25 - Math.sin(t * 6) * 0.08,
+      leftArmAngle: -1.12 - Math.sin(t * 6) * 0.07,
+      rightArmAngle: 1.12 + Math.sin(t * 6) * 0.07,
+      leftElbow: -0.3,
+      rightElbow: 0.3,
       headTilt: Math.sin(t * 9) * 0.028,
     };
   }
@@ -970,6 +1226,7 @@ function drawWorld(
   }
 
   drawTable(ctx, layout, tableShake ? tableShake + t : 0);
+  drawInstabilityMarks(ctx, layout, tableShake / 1.4, t);
 
   if (t >= 8.8 && t < 11.2) {
     const pickup = ease(clamp((t - 8.8) / 1.8, 0, 1));
@@ -995,31 +1252,35 @@ function drawWorld(
       bodyY: Math.sin(p * Math.PI) * h * 0.035,
       scaleX: 1 + Math.sin(p * Math.PI) * 0.035,
       scaleY: 1 - Math.sin(p * Math.PI) * 0.065,
-      leftArmAngle: lerp(0.62, 0, p),
-      rightArmAngle: lerp(-0.62, 0, p),
+      leftArmAngle: lerp(-0.22, 0, p),
+      rightArmAngle: lerp(0.38, 0, p),
+      leftElbow: lerp(-0.12, -0.08, p),
+      rightElbow: lerp(0.16, 0.08, p),
       headTilt: 0.02 * (1 - p),
     };
-    girlX = lerp(layout.tableX, layout.tableX + h * 0.32, p);
-    girlFoot = lerp(layout.floorY - h * 0.12, layout.floorY, p);
-    girlHeight = lerp(h * 0.78, h, p);
+    girlX = lerp(layout.tableX + h * 0.135, layout.tableX + h * 0.32, p);
+    girlFoot = lerp(layout.floorY - h * 0.4, layout.floorY, p);
+    girlHeight = lerp(h * 0.8, h, p);
     girlMotion = {
-      bodyRotation: lerp(-0.07, 0, p),
-      leftArmAngle: lerp(-1.12, 0, p),
-      rightArmAngle: lerp(1.12, 0, p),
-      leftArmY: lerp(18, 0, p),
-      rightArmY: lerp(18, 0, p),
-      leftLegAngle: lerp(0.62, 0, p),
-      rightLegAngle: lerp(-0.62, 0, p),
-      leftLegY: lerp(-42, 0, p),
-      rightLegY: lerp(-42, 0, p),
+      bodyRotation: lerp(0.025, 0, p),
+      leftArmAngle: lerp(-0.48, 0, p),
+      rightArmAngle: lerp(-0.34, 0, p),
+      leftElbow: lerp(-0.16, -0.08, p),
+      rightElbow: lerp(-0.12, 0.08, p),
+      leftArmY: lerp(9, 0, p),
+      rightArmY: lerp(9, 0, p),
+      leftLegAngle: lerp(0.5, 0, p),
+      rightLegAngle: lerp(-0.5, 0, p),
+      leftLegY: lerp(-38, 0, p),
+      rightLegY: lerp(-38, 0, p),
       bob: Math.sin(p * Math.PI) * 2,
       headTilt: lerp(-0.02, 0.015, p),
     };
   }
 
   if (t >= 27.8 && t < 30.2) {
-    boyX = layout.tableX - h * 0.22;
-    girlX = layout.tableX + h * 0.28;
+    boyX = layout.tableX - h * 0.26;
+    girlX = layout.tableX + h * 0.3;
     girlFoot = layout.floorY;
     girlHeight = h;
     boyMotion = { ...idleMotion(t * 0.6, 0.65), headTilt: 0.025, bodyRotation: 0.008 };
@@ -1030,9 +1291,9 @@ function drawWorld(
 
   if (t >= 30.2) {
     const p = ease((t - 30.2) / 3.1);
-    girlX = lerp(layout.tableX + h * 0.28, width * 0.28, p);
+    girlX = lerp(layout.tableX + h * 0.3, width * 0.28, p);
     girlFoot = layout.floorY;
-    boyX = lerp(layout.tableX - h * 0.22, width * 0.78, p);
+    boyX = lerp(layout.tableX - h * 0.26, width * 0.72, p);
     girlMotion = walkMotion((t - 30.2) * 1.65, 1.05);
     boyMotion = walkMotion((t - 30.2) * 1.55 + 0.3, 1.05);
   }
@@ -1066,7 +1327,7 @@ function drawWorld(
 function initialModel(): GameModel {
   return {
     phase: "intro",
-    playerX: 0.16,
+    playerX: 0.28,
     walkFrame: 0,
     cutsceneTime: 0,
     cutsceneStartedAt: 0,
@@ -1150,19 +1411,48 @@ export default function MemoryGame() {
   }, [playMusicFromCue]);
 
   useEffect(() => {
-    const image = new Image();
-    image.src = "game-assets/characters-reference.png";
-    image.onload = () => {
-      const boyCanvas = createCutout(image, { x: 250, y: 52, width: 205, height: 365 });
-      const girlCanvas = createCutout(image, { x: 443, y: 61, width: 198, height: 360 });
+    if (phase !== "intro") return;
+    const revealDuration = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 1200 : 2900;
+    const revealTimer = window.setTimeout(startGame, revealDuration);
+    return () => window.clearTimeout(revealTimer);
+  }, [phase, startGame]);
+
+  useEffect(() => {
+    const boyImage = new Image();
+    const girlImage = new Image();
+    let loaded = 0;
+    let cancelled = false;
+    const prepareRigs = () => {
+      loaded += 1;
+      if (loaded !== 2 || cancelled) return;
+      const boyCanvas = createCutout(boyImage, {
+        x: 0,
+        y: 0,
+        width: boyImage.naturalWidth,
+        height: boyImage.naturalHeight,
+      });
+      const girlCanvas = createCutout(girlImage, {
+        x: 0,
+        y: 0,
+        width: girlImage.naturalWidth,
+        height: girlImage.naturalHeight,
+      });
       rigsRef.current = {
         boy: createRig(boyCanvas, "boy"),
         girl: createRig(girlCanvas, "girl"),
-        shadow: createRig(tintCanvas(boyCanvas), "boy"),
+        shadow: createRig(tintCanvas(boyCanvas), "shadow"),
       };
     };
+
+    boyImage.onload = prepareRigs;
+    girlImage.onload = prepareRigs;
+    boyImage.src = "game-assets/boy-clean-v2.png";
+    girlImage.src = "game-assets/girl-clean-v2.png";
+
     return () => {
-      image.onload = null;
+      cancelled = true;
+      boyImage.onload = null;
+      girlImage.onload = null;
     };
   }, []);
 
@@ -1174,9 +1464,12 @@ export default function MemoryGame() {
 
     const resize = () => {
       const bounds = canvas.getBoundingClientRect();
-      const scale = Math.min(1, 760 / Math.max(bounds.width, bounds.height));
-      canvas.width = Math.max(320, Math.round(bounds.width * scale));
-      canvas.height = Math.max(320, Math.round(bounds.height * scale));
+      const cssWidth = Math.max(1, bounds.width);
+      const cssHeight = Math.max(1, bounds.height);
+      const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+      const renderScale = Math.min(pixelRatio, 2560 / cssWidth, 1440 / cssHeight);
+      canvas.width = Math.max(320, Math.round(cssWidth * renderScale));
+      canvas.height = Math.max(320, Math.round(cssHeight * renderScale));
     };
 
     resize();
@@ -1300,12 +1593,12 @@ export default function MemoryGame() {
         aria-label="Juego pixel art frontal con personajes animados. Controlas a la chica y caminas hacia los otros dos personajes."
       />
 
-      <div className={`scene-status scene-status-${phase}`} aria-hidden="true">
-        <span className="status-light" />
-        {phase === "walk" && "ACÉRCATE A ELLOS"}
-        {phase === "cinematic" && "CINEMÁTICA"}
-        {phase === "intro" && "TÚ ERES ELLA"}
-      </div>
+      {phase === "walk" && (
+        <div className="scene-status" aria-hidden="true">
+          <span className="status-light" />
+          ACÉRCATE A ELLOS
+        </div>
+      )}
 
       <button
         type="button"
@@ -1318,15 +1611,12 @@ export default function MemoryGame() {
       </button>
 
       {phase === "intro" && (
-        <section className="start-overlay" aria-label="Iniciar juego">
-          <div className="start-card">
-            <span>TÚ ERES ELLA</span>
-            <p>Camina hasta los otros dos personajes.</p>
-            <button type="button" className="start-button" onClick={startGame}>
-              COMENZAR
-            </button>
-          </div>
-        </section>
+        <button
+          type="button"
+          className="start-reveal"
+          aria-label="Comenzar ahora"
+          onClick={startGame}
+        />
       )}
 
       {phase === "end" && (
